@@ -1,12 +1,19 @@
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { login } from "@/api/login";
 import { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity } from "react-native";
-import { LoginRequest } from "@/types/login.d";
-import login from "@/api/auth";
 import { router } from "expo-router";
-import { authStore } from "@/stores/authStore";
-import { observer } from "mobx-react-lite";
 
-const Login = observer(() => {
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    const response = await login({ email, password });
+    if (response.status === 200) {
+      router.replace("/list");
+    }
+  };
+
   return (
     <View className="flex-1 items-center justify-center bg-gray-200">
       <View className="bg-white p-4 rounded-md space-y-4">
@@ -14,28 +21,24 @@ const Login = observer(() => {
         <TextInput
           placeholder="Email"
           className="border border-gray-300 rounded-md p-2"
-          value={authStore.email}
-          onChangeText={(x) => {
-            authStore.setEmail(x);
-          }}
+          value={email}
+          onChangeText={setEmail}
         />
         <TextInput
           placeholder="Password"
           className="border border-gray-300 rounded-md p-2"
-          value={authStore.password}
-          onChangeText={(x) => {
-            authStore.setPassword(x);
-          }}
+          value={password}
+          onChangeText={setPassword}
         />
         <TouchableOpacity
           className="bg-blue-500 text-white p-2 rounded-md"
-          onPress={authStore.login}
+          onPress={handleLogin}
         >
           <Text className="text-center text-white">Login</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-});
+};
 
 export default Login;
