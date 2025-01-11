@@ -1,14 +1,21 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { getList } from "@/api/list";
 import { useState, useEffect } from "react";
 import { ProjectList } from "@/types/list";
+import { withAuth } from "@/utils/withAuth";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const List = () => {
+  const logout = useAuthStore((state) => state.logout);
   const [list, setList] = useState<ProjectList>({ projects: [] });
 
   useEffect(() => {
     getList().then((response) => setList(response.data));
   }, []);
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <ScrollView className="flex-1 bg-gray-100">
@@ -26,9 +33,15 @@ const List = () => {
             </Text>
           </View>
         ))}
+        <TouchableOpacity
+          className="bg-blue-500 text-white p-2 rounded-md"
+          onPress={handleLogout}
+        >
+          <Text className="text-center text-white">Logout</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
 
-export default List;
+export default withAuth(List);
