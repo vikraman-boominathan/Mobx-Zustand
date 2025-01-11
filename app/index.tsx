@@ -2,14 +2,17 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { login } from "@/api/login";
 import { useState } from "react";
 import { router } from "expo-router";
+import { observer } from "mobx-react-lite";
+import { authStore } from "@/stores/authStore";
 
-const Login = () => {
+const Login = observer(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     const response = await login({ email, password });
     if (response.status === 200) {
+      authStore.setAuthenticated(true);
       router.replace("/list");
     }
   };
@@ -39,6 +42,6 @@ const Login = () => {
       </View>
     </View>
   );
-};
+});
 
 export default Login;
